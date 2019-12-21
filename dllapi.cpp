@@ -1,11 +1,22 @@
 #include <extdll.h>
 #include <meta_api.h>
 #include "entity_state.h"
+#include "cbase.h"
+#include "weapons.h"
+#include "player.h"
+#include "enginecallback.h"
 
-cvar_t ssp_version = { "ssp_version", (char*)Plugin_info.version, FCVAR_SERVER | FCVAR_EXTDLL, 0, nullptr };
-cvar_t ssp_predict_origin = { "ssp_predict_origin", "16.0", FCVAR_SERVER | FCVAR_EXTDLL, 16.f, nullptr };
-cvar_t ssp_reversed_visibility = { "ssp_reversed_visibility", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
-cvar_t ssp_remove_players_solid = { "ssp_remove_players_solid", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
+cvar_t cv_ssp_version = { "ssp_version", (char*)Plugin_info.version, FCVAR_SERVER | FCVAR_EXTDLL, 0, nullptr };
+cvar_t cv_ssp_predict_origin = { "ssp_predict_origin", "16.0", FCVAR_SERVER | FCVAR_EXTDLL, 16.f, nullptr };
+cvar_t cv_ssp_reversed_visibility = { "ssp_reversed_visibility", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
+cvar_t cv_ssp_remove_players_solid = { "ssp_remove_players_solid", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
+cvar_t cv_ssp_teammates = { "ssp_teammates", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
+
+cvar_t* pcv_ssp_version = nullptr;
+cvar_t* pcv_ssp_predict_origin = nullptr;
+cvar_t* pcv_ssp_reversed_visibility = nullptr;
+cvar_t* pcv_ssp_remove_players_solid = nullptr;
+cvar_t* pcv_ssp_teammates = nullptr;
 
 class player_s {
 public:
@@ -14,10 +25,10 @@ public:
 
 player_s players[MAX_CLIENTS];
 
-bool MyTraceHull(Vector vecSrc, Vector vecEnd, Vector mins, Vector maxs, edict_t* pSkip)
+bool MyTraceHull(Vector vecSrc, Vector vecEnd, Vector vecMins, Vector vecMaxs, edict_t* pSkip)
 {
 	TraceResult trace;
-	float* minmaxs[2] = { mins, maxs };
+	float* minmaxs[2] = { vecMins, vecMaxs };
 	Vector vecTemp;
 	int i, j, k;
 
@@ -62,7 +73,7 @@ BOOL AddToFullPack_Pre(struct entity_state_s* state, int e, edict_t* ent, edict_
 		auto attacker_index = ENTINDEX(host);
 		auto enemy_index = e;
 
-		if (players[attacker_index - 1].state[enemy_index - 1] && ((ssp_reversed_visibility.value && players[attacker_index - 1].state[enemy_index - 1]) || !ssp_reversed_visibility.value))
+		if (players[attacker_index - 1].state[enemy_index - 1] && ((pcv_ssp_reversed_visibility->value && players[attacker_index - 1].state[enemy_index - 1]) || !pcv_ssp_reversed_visibility->value))
 			RETURN_META_VALUE(MRES_SUPERCEDE, FALSE);
 	}
 
@@ -71,14 +82,23 @@ BOOL AddToFullPack_Pre(struct entity_state_s* state, int e, edict_t* ent, edict_
 
 BOOL AddToFullPack_Post(struct entity_state_s* state, int e, edict_t* ent, edict_t* host, int hostflags, BOOL player, unsigned char* pSet)
 {
-	if (player && ent != host && ssp_remove_players_solid.value)
+	if (player && ent != host && pcv_ssp_remove_players_solid->value)
 	{
-		auto distance = Vector(host->v.origin - ent->v.origin).Length();
+		CBasePlayer* pAttackerPlayer = (CBasePlayer*)GET_PRIVATE(host);
+		CBasePlayer* pEnemyPlayer = (CBasePlayer*)GET_PRIVATE(ent);
 
-		if (distance > 128.f) // For stuck
+		if (pEnemyPlayer && pAttackerPlayer)
 		{
-			state->solid = SOLID_NOT;
-			//gpMetaUtilFuncs->pfnLogConsole(PLID, "SOLID_NOT for %i", ENTINDEX(ent));
+			if ((pcv_ssp_teammates->value && pAttackerPlayer->m_iTeam == pEnemyPlayer->m_iTeam) || pAttackerPlayer->m_iTeam != pEnemyPlayer->m_iTeam)
+			{
+				auto distance = Vector(host->v.origin - ent->v.origin).Length();
+
+				if (distance > 128.f) // For stuck
+				{
+					state->solid = SOLID_NOT;
+					//gpMetaUtilFuncs->pfnLogConsole(PLID, "SOLID_NOT for %i", ENTINDEX(ent));
+				}
+			}
 		}
 	}
 
@@ -97,17 +117,19 @@ void StartFrame_Post()
 		if (attacker_edict->v.health <= 0.f || attacker_edict->v.deadflag != DEAD_NO)
 			continue;
 
+		CBasePlayer* pAttackerPlayer = (CBasePlayer*)GET_PRIVATE(attacker_edict);
+
+		if (!pAttackerPlayer)
+			continue;
+
 		Vector vecSrc(attacker_edict->v.origin + attacker_edict->v.view_ofs);
 
 		for (int enemy_index = 1; enemy_index <= gpGlobals->maxClients; enemy_index++)
 		{
-			if (enemy_index == attacker_index)
-			{
-				players[attacker_index - 1].state[enemy_index - 1] = false;
-				continue;
-			}
+			players[attacker_index - 1].state[enemy_index - 1] = false;
 
-			players[attacker_index - 1].state[enemy_index - 1] = true;
+			if (enemy_index == attacker_index)
+				continue;
 
 			auto enemy_edict = INDEXENT(enemy_index);
 
@@ -119,6 +141,18 @@ void StartFrame_Post()
 
 			if (enemy_edict->v.effects & EF_NODRAW)
 				continue;
+
+			CBasePlayer* pEnemyPlayer = (CBasePlayer*)GET_PRIVATE(enemy_edict);
+
+			if (!pEnemyPlayer)
+				continue;
+
+			//gpMetaUtilFuncs->pfnLogConsole(PLID, "%i %i %f", pEnemyPlayer->m_iTeam, pAttackerPlayer->m_iTeam, pcv_ssp_teammates->value);
+
+			if (!pcv_ssp_teammates->value && pEnemyPlayer->m_iTeam == pAttackerPlayer->m_iTeam)
+				continue;
+
+			players[attacker_index - 1].state[enemy_index - 1] = true;
 
 			if (MyTraceHull(vecSrc, enemy_edict->v.origin, enemy_edict->v.mins, enemy_edict->v.maxs, attacker_edict))
 			{
@@ -152,8 +186,8 @@ void StartFrame_Post()
 			{
 				Vector vecEnd = enemy_edict->v.origin;
 
-				if (ssp_predict_origin.value)
-					vecEnd = vecEnd + enemy_edict->v.velocity * gpGlobals->frametime * ssp_predict_origin.value;
+				if (pcv_ssp_predict_origin->value)
+					vecEnd = vecEnd + enemy_edict->v.velocity * gpGlobals->frametime * pcv_ssp_predict_origin->value;
 
 				if (MyTraceHull(vecSrc, vecEnd, enemy_edict->v.mins, enemy_edict->v.maxs, attacker_edict))
 				{
