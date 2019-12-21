@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: install shit
-      run: apt-get install gcc-multilib g++-multilib 
+      run: sudo apt-get install gcc-multilib g++-multilib 
     - name: make
       run: make
