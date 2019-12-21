@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_plugin", "msvc\example_plugin.vcxproj", "{1B03767B-CB83-4A1B-8480-EF08D557838B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ssp", "msvc\ssp.vcxproj", "{1B03767B-CB83-4A1B-8480-EF08D557838B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
