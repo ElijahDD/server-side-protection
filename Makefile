@@ -1,7 +1,7 @@
 HLSDK = include/hlsdk
 METAMOD = include/metamod
 
-NAME = example_plugin
+NAME = ssp
 
 COMPILER = g++ -m32
 

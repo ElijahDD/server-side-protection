@@ -51,6 +51,7 @@ C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS* pFunctionTable, m
 	g_engfuncs.pfnCvar_RegisterVariable(&ssp_version);
 	g_engfuncs.pfnCvar_RegisterVariable(&ssp_predict_origin);
 	g_engfuncs.pfnCvar_RegisterVariable(&ssp_reversed_visibility);
+	g_engfuncs.pfnCvar_RegisterVariable(&ssp_remove_players_solid);
 
 	//if (meta_init_rehlds_api())
 	//	g_engfuncs.pfnServerPrint("ReHLDS API successfully initialized.\n");

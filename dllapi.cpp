@@ -1,9 +1,11 @@
 #include <extdll.h>
 #include <meta_api.h>
+#include "entity_state.h"
 
 cvar_t ssp_version = { "ssp_version", (char*)Plugin_info.version, FCVAR_SERVER | FCVAR_EXTDLL, 0, nullptr };
 cvar_t ssp_predict_origin = { "ssp_predict_origin", "16.0", FCVAR_SERVER | FCVAR_EXTDLL, 16.f, nullptr };
 cvar_t ssp_reversed_visibility = { "ssp_reversed_visibility", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
+cvar_t ssp_remove_players_solid = { "ssp_remove_players_solid", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
 
 class player_s {
 public:
@@ -62,6 +64,22 @@ BOOL AddToFullPack_Pre(struct entity_state_s* state, int e, edict_t* ent, edict_
 
 		if (players[attacker_index - 1].state[enemy_index - 1] && ((ssp_reversed_visibility.value && players[attacker_index - 1].state[enemy_index - 1]) || !ssp_reversed_visibility.value))
 			RETURN_META_VALUE(MRES_SUPERCEDE, FALSE);
+	}
+
+	RETURN_META_VALUE(MRES_IGNORED, 0);
+}
+
+BOOL AddToFullPack_Post(struct entity_state_s* state, int e, edict_t* ent, edict_t* host, int hostflags, BOOL player, unsigned char* pSet)
+{
+	if (player && ent != host && ssp_remove_players_solid.value)
+	{
+		auto distance = Vector(host->v.origin - ent->v.origin).Length();
+
+		if (distance > 128.f) // For stuck
+		{
+			state->solid = SOLID_NOT;
+			gpMetaUtilFuncs->pfnLogConsole(PLID, "SOLID_NOT for %i", ENTINDEX(ent));
+		}
 	}
 
 	RETURN_META_VALUE(MRES_IGNORED, 0);
@@ -252,7 +270,7 @@ DLL_FUNCTIONS g_DllFunctionTable_Post =
 	NULL,					// pfnPM_FindTextureType
 	NULL,					// pfnSetupVisibility
 	NULL,					// pfnUpdateClientData
-	NULL,					// pfnAddToFullPack
+	&AddToFullPack_Post,	// pfnAddToFullPack
 	NULL,					// pfnCreateBaseline
 	NULL,					// pfnRegisterEncoders
 	NULL,					// pfnGetWeaponData
