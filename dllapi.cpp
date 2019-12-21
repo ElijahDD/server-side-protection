@@ -78,7 +78,7 @@ BOOL AddToFullPack_Post(struct entity_state_s* state, int e, edict_t* ent, edict
 		if (distance > 128.f) // For stuck
 		{
 			state->solid = SOLID_NOT;
-			gpMetaUtilFuncs->pfnLogConsole(PLID, "SOLID_NOT for %i", ENTINDEX(ent));
+			//gpMetaUtilFuncs->pfnLogConsole(PLID, "SOLID_NOT for %i", ENTINDEX(ent));
 		}
 	}
 
