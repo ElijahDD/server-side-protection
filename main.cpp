@@ -96,9 +96,7 @@ void StartFrame_Post()
 				continue;
 			}
 
-			int nWeaponIndex = MODEL_INDEX(STRING(pEnemyEdict->v.weaponmodel));
-
-			if (nWeaponIndex)
+			if (pEnemyPlayer->m_pActiveItem && pEnemyPlayer->m_pActiveItem->m_iId != WEAPON_NONE)
 			{
 				Vector vecAngles(pEnemyEdict->v.angles), vecForward;
 
