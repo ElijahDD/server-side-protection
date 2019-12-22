@@ -59,9 +59,7 @@ void StartFrame_Post()
 
 		if (!pAttackerPlayer)
 			continue;
-
-		Vector vecAttackerEyePos(pAttackerEdict->v.origin + pAttackerEdict->v.view_ofs);
-
+		
 		for (int enemy_index = 1; enemy_index <= gpGlobals->maxClients; enemy_index++)
 		{
 			players[attacker_index - 1].state[enemy_index - 1] = false; // disable block for player
@@ -92,7 +90,7 @@ void StartFrame_Post()
 
 			players[attacker_index - 1].state[enemy_index - 1] = true; // enable block for player
 
-			if (UTIL_TraceHull(vecAttackerEyePos, pEnemyEdict->v.origin, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict)) // attacker see enemy
+			if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), pEnemyEdict->v.origin, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict)) // attacker see enemy
 			{
 				players[attacker_index - 1].state[enemy_index - 1] = false;
 				continue;
@@ -108,9 +106,9 @@ void StartFrame_Post()
 
 				TraceResult trace;
 
-				TRACE_LINE(pEnemyEdict->v.origin + pEnemyEdict->v.view_ofs, (pEnemyEdict->v.origin + pEnemyEdict->v.view_ofs) + vecForward * 64.f, ignore_monsters, pAttackerEdict, &trace); // mb cuustom for weapons
+				TRACE_LINE(pEnemyPlayer->EyePosition(), pEnemyPlayer->EyePosition() + vecForward * 64.f, ignore_monsters, pAttackerEdict, &trace); // mb cuustom for weapons
 
-				TRACE_LINE(vecAttackerEyePos, trace.vecEndPos, ignore_monsters, pAttackerEdict, &trace); // maybe for no bugs => - endpos - vecdir * 4.f
+				TRACE_LINE(pAttackerPlayer->EyePosition(), trace.vecEndPos, ignore_monsters, pAttackerEdict, &trace); // maybe for no bugs => - endpos - vecdir * 4.f
 
 				if (trace.flFraction == 1.f) // attacker see weapon enemy
 				{
@@ -127,14 +125,14 @@ void StartFrame_Post()
 				if (pcv_ssp_predict_origin->value)
 					vecEnd = vecEnd + pEnemyEdict->v.velocity * gpGlobals->frametime * pcv_ssp_predict_origin->value;
 
-				if (UTIL_TraceHull(vecAttackerEyePos, vecEnd, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict))
+				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict))
 				{
 					//gpMetaUtilFuncs->pfnLogConsole(PLID, "velocity => attacker_index: %i, enemy_index: %i", attacker_index, enemy_index);
 					players[attacker_index - 1].state[enemy_index - 1] = false;
 					continue;
 				}
 
-				if (UTIL_TraceHull(vecAttackerEyePos, vecEnd, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict))
+				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict))
 				{
 					//gpMetaUtilFuncs->pfnLogConsole(PLID, "inversed velocity => attacker_index: %i, enemy_index: %i", attacker_index, enemy_index);
 					players[attacker_index - 1].state[enemy_index - 1] = false;
