@@ -15,7 +15,7 @@
 class player_s
 {
 public:
-	bool state[MAX_CLIENTS];
+	bool state[MAX_CLIENTS]; // if true -> block
 };
 extern player_s players[MAX_CLIENTS];
 
