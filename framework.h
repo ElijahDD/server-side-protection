@@ -1,12 +1,6 @@
-#include <extdll.h>
-#include <meta_api.h>
-#include <stdio.h>
-#include <string.h>
-#include <rehlds_api.h>
-#include "ex_rehlds_api.h"
-#include "cvars.h"
-#include "entity_state.h"
-#include "cbase.h"
-#include "weapons.h"
-#include "player.h"
-#include "enginecallback.h"
+#ifndef FRAMEWORK_H
+#define FRAMEWORK_H
+
+#include "main.h"
+
+#endif // FRAMEWORK_H

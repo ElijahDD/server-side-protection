@@ -75,8 +75,6 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>
-      </SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)..\;$(ProjectDir)..\include;$(ProjectDir)..\include\metamod;$(ProjectDir)..\include\hlsdk\common;$(ProjectDir)..\include\hlsdk\dlls;$(ProjectDir)..\include\hlsdk\engine;$(ProjectDir)..\include\hlsdk\pm_shared;$(ProjectDir)..\include\hlsdk\public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <OmitFramePointers>true</OmitFramePointers>
@@ -86,8 +84,10 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -102,16 +102,20 @@
     <ClCompile Include="..\dllapi.cpp" />
     <ClCompile Include="..\engine_api.cpp" />
     <ClCompile Include="..\ex_rehlds_api.cpp" />
-    <ClCompile Include="..\framework.cpp" />
+    <ClCompile Include="..\framework.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\h_export.cpp" />
     <ClCompile Include="..\include\hlsdk\engine\sys_shared.cpp" />
     <ClCompile Include="..\include\hlsdk\public\interface.cpp" />
+    <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\meta_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ex_rehlds_api.h" />
     <ClInclude Include="..\cvars.h" />
     <ClInclude Include="..\framework.h" />
+    <ClInclude Include="..\main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
