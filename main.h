@@ -11,9 +11,6 @@
 #include "cvars.h"
 #include "entity_state.h"
 #include "cbase.h"
-#include "weapons.h"
-#include "player.h"
-#include "enginecallback.h"
 
 class player_s
 {
