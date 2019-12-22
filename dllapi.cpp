@@ -1,17 +1,5 @@
 #include "framework.h"
 
-cvar_t cv_ssp_version = { "ssp_version", (char*)Plugin_info.version, FCVAR_SERVER | FCVAR_EXTDLL, 0, nullptr };
-cvar_t cv_ssp_predict_origin = { "ssp_predict_origin", "16.0", FCVAR_SERVER | FCVAR_EXTDLL, 16.f, nullptr };
-cvar_t cv_ssp_reversed_visibility = { "ssp_reversed_visibility", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
-cvar_t cv_ssp_remove_players_solid = { "ssp_remove_players_solid", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
-cvar_t cv_ssp_teammates = { "ssp_teammates", "1.0", FCVAR_SERVER | FCVAR_EXTDLL, 1.f, nullptr };
-
-cvar_t* pcv_ssp_version = nullptr;
-cvar_t* pcv_ssp_predict_origin = nullptr;
-cvar_t* pcv_ssp_reversed_visibility = nullptr;
-cvar_t* pcv_ssp_remove_players_solid = nullptr;
-cvar_t* pcv_ssp_teammates = nullptr;
-
 class player_s {
 public:
 	bool state[MAX_CLIENTS];

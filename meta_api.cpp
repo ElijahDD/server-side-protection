@@ -45,17 +45,7 @@ C_DLLEXPORT int Meta_Attach(PLUG_LOADTIME now, META_FUNCTIONS* pFunctionTable, m
 	gpMetaUtilFuncs->pfnLogConsole(PLID, "[%s] %s attach.\n", Plugin_info.logtag, Plugin_info.name);
 
 	// PT_STARTUP maybe add ini for no crash? or xz
-	g_engfuncs.pfnCvar_RegisterVariable(&cv_ssp_version);
-	g_engfuncs.pfnCvar_RegisterVariable(&cv_ssp_predict_origin);
-	g_engfuncs.pfnCvar_RegisterVariable(&cv_ssp_reversed_visibility);
-	g_engfuncs.pfnCvar_RegisterVariable(&cv_ssp_remove_players_solid);
-	g_engfuncs.pfnCvar_RegisterVariable(&cv_ssp_teammates);
-
-	pcv_ssp_version = g_engfuncs.pfnCVarGetPointer(cv_ssp_version.name);
-	pcv_ssp_predict_origin = g_engfuncs.pfnCVarGetPointer(cv_ssp_predict_origin.name);
-	pcv_ssp_reversed_visibility = g_engfuncs.pfnCVarGetPointer(cv_ssp_reversed_visibility.name);
-	pcv_ssp_remove_players_solid = g_engfuncs.pfnCVarGetPointer(cv_ssp_remove_players_solid.name);
-	pcv_ssp_teammates = g_engfuncs.pfnCVarGetPointer(cv_ssp_teammates.name);
+	InitCvars();
 
 	//if (meta_init_rehlds_api())
 	//	g_engfuncs.pfnServerPrint("ReHLDS API successfully initialized.\n");

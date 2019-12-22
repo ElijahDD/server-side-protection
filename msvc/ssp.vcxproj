@@ -98,6 +98,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\cvars.cpp" />
     <ClCompile Include="..\dllapi.cpp" />
     <ClCompile Include="..\engine_api.cpp" />
     <ClCompile Include="..\ex_rehlds_api.cpp" />

@@ -9,3 +9,5 @@ extern cvar_t* pcv_ssp_predict_origin;
 extern cvar_t* pcv_ssp_reversed_visibility;
 extern cvar_t* pcv_ssp_remove_players_solid;
 extern cvar_t* pcv_ssp_teammates;
+
+void InitCvars();
