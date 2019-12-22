@@ -52,12 +52,15 @@ void StartFrame_Post()
 		if (!pAttackerEdict)
 			continue;
 
-		if (pAttackerEdict->v.health <= 0.f || pAttackerEdict->v.deadflag != DEAD_NO)
-			continue;
-
 		CBasePlayer* pAttackerPlayer = (CBasePlayer*)GET_PRIVATE(pAttackerEdict);
 
 		if (!pAttackerPlayer)
+			continue;
+
+		if (!pAttackerPlayer->pev)
+			continue;
+
+		if (!pAttackerPlayer->IsAlive())
 			continue;
 		
 		for (int enemy_index = 1; enemy_index <= gpGlobals->maxClients; enemy_index++)
@@ -72,15 +75,18 @@ void StartFrame_Post()
 			if (!pEnemyEdict)
 				continue;
 
-			if (pEnemyEdict->v.health <= 0.f || pEnemyEdict->v.deadflag != DEAD_NO)
-				continue;
-
-			if (pEnemyEdict->v.effects & EF_NODRAW)
-				continue;
-
 			CBasePlayer* pEnemyPlayer = (CBasePlayer*)GET_PRIVATE(pEnemyEdict);
 
 			if (!pEnemyPlayer)
+				continue;
+
+			if (!pEnemyPlayer->pev)
+				continue;
+
+			if (!pEnemyPlayer->IsAlive())
+				continue;
+
+			if (pEnemyPlayer->pev->effects & EF_NODRAW) // optimization?
 				continue;
 
 			//gpMetaUtilFuncs->pfnLogConsole(PLID, "%i %i %f", pEnemyPlayer->m_iTeam, pAttackerPlayer->m_iTeam, pcv_ssp_teammates->value);
@@ -90,7 +96,7 @@ void StartFrame_Post()
 
 			players[attacker_index - 1].state[enemy_index - 1] = true; // enable block for player
 
-			if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), pEnemyEdict->v.origin, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict)) // attacker see enemy
+			if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), pEnemyPlayer->pev->origin, pEnemyPlayer->pev->mins, pEnemyPlayer->pev->maxs, pAttackerEdict)) // attacker see enemy
 			{
 				players[attacker_index - 1].state[enemy_index - 1] = false;
 				continue;
@@ -98,7 +104,7 @@ void StartFrame_Post()
 
 			if (pEnemyPlayer->m_pActiveItem && pEnemyPlayer->m_pActiveItem->m_iId != WEAPON_NONE)
 			{
-				Vector vecAngles(pEnemyEdict->v.angles), vecForward;
+				Vector vecAngles(pEnemyPlayer->pev->angles), vecForward;
 
 				g_engfuncs.pfnAngleVectors(vecAngles, vecForward, NULL, NULL);
 
@@ -118,19 +124,19 @@ void StartFrame_Post()
 
 			if (!pEnemyEdict->v.velocity.IsZero())
 			{
-				Vector vecEnd = pEnemyEdict->v.origin;
+				Vector vecEnd = pEnemyPlayer->pev->origin;
 
 				if (pcv_ssp_predict_origin->value)
-					vecEnd = vecEnd + pEnemyEdict->v.velocity * gpGlobals->frametime * pcv_ssp_predict_origin->value;
+					vecEnd = vecEnd + pEnemyPlayer->pev->velocity * gpGlobals->frametime * pcv_ssp_predict_origin->value;
 
-				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict))
+				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyPlayer->pev->mins, pEnemyPlayer->pev->maxs, pAttackerEdict))
 				{
 					//gpMetaUtilFuncs->pfnLogConsole(PLID, "velocity => attacker_index: %i, enemy_index: %i", attacker_index, enemy_index);
 					players[attacker_index - 1].state[enemy_index - 1] = false;
 					continue;
 				}
 
-				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyEdict->v.mins, pEnemyEdict->v.maxs, pAttackerEdict))
+				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyPlayer->pev->mins, pEnemyPlayer->pev->maxs, pAttackerEdict))
 				{
 					//gpMetaUtilFuncs->pfnLogConsole(PLID, "inversed velocity => attacker_index: %i, enemy_index: %i", attacker_index, enemy_index);
 					players[attacker_index - 1].state[enemy_index - 1] = false;
