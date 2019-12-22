@@ -1,4 +1,4 @@
-LIBRARY example_plugin
+LIBRARY ssp
 EXPORTS
 	GiveFnptrsToDll			@1
 SECTIONS

@@ -411,7 +411,7 @@ public:
 		va_list arg_ptr;
 
 		va_start(arg_ptr, pszFormat);
-		//_vsnprintf(m_szBuf, sizeof(m_szBuf) - 1, pszFormat, arg_ptr);
+		//_vsnprintf(m_szBuf, sizeof(m_szBuf) - 1, pszFormat, arg_ptr); // g++ bug
 		vsprintf(m_szBuf, pszFormat, arg_ptr);
 		va_end(arg_ptr);
 
