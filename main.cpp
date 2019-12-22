@@ -62,6 +62,12 @@ void StartFrame_Post()
 
 		if (!pAttackerPlayer->IsAlive())
 			continue;
+
+		int ping, packetloss;
+
+		g_engfuncs.pfnGetPlayerStats(pAttackerEdict, &ping, &packetloss);
+
+		//gpMetaUtilFuncs->pfnLogConsole(PLID, "%i %f %f %i", ping, ping / 1000.f, gpGlobals->frametime, TIME_TO_TICKS(ping / 1000.f));
 		
 		for (int enemy_index = 1; enemy_index <= gpGlobals->maxClients; enemy_index++)
 		{
@@ -122,23 +128,17 @@ void StartFrame_Post()
 				}
 			}
 
-			if (!pEnemyEdict->v.velocity.IsZero())
+			if (pcv_ssp_predict_origin->value && !pAttackerPlayer->pev->velocity.IsZero() && ping)
 			{
-				Vector vecEnd = pEnemyPlayer->pev->origin;
+				float flPing = ping / 1000.f;
 
-				if (pcv_ssp_predict_origin->value)
-					vecEnd = vecEnd + pEnemyPlayer->pev->velocity * gpGlobals->frametime * pcv_ssp_predict_origin->value;
+				int nFuture = TIME_TO_TICKS(flPing);
 
-				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyPlayer->pev->mins, pEnemyPlayer->pev->maxs, pAttackerEdict))
+				Vector vecPrediction = pAttackerPlayer->pev->velocity * gpGlobals->frametime * nFuture;
+
+				if (UTIL_TraceHull(pAttackerPlayer->EyePosition() + vecPrediction, pEnemyPlayer->pev->origin, pEnemyPlayer->pev->mins, pEnemyPlayer->pev->maxs, pAttackerEdict))
 				{
-					//gpMetaUtilFuncs->pfnLogConsole(PLID, "velocity => attacker_index: %i, enemy_index: %i", attacker_index, enemy_index);
-					players[attacker_index - 1].state[enemy_index - 1] = false;
-					continue;
-				}
-
-				if (UTIL_TraceHull(pAttackerPlayer->EyePosition(), vecEnd, pEnemyPlayer->pev->mins, pEnemyPlayer->pev->maxs, pAttackerEdict))
-				{
-					//gpMetaUtilFuncs->pfnLogConsole(PLID, "inversed velocity => attacker_index: %i, enemy_index: %i", attacker_index, enemy_index);
+					//gpMetaUtilFuncs->pfnLogConsole(PLID, "velocity %i => attacker_index: %i, enemy_index: %i | %f %f %f", nFuture, attacker_index, enemy_index, vecPrediction.x, vecPrediction.y, vecPrediction.z);
 					players[attacker_index - 1].state[enemy_index - 1] = false;
 					continue;
 				}
