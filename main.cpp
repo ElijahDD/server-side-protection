@@ -128,7 +128,7 @@ void StartFrame_Post()
 				}
 			}
 
-			if (pcv_ssp_predict_origin->value && !pAttackerPlayer->pev->velocity.IsZero() && ping)
+			if (pcv_ssp_ping_correction->value && !pAttackerPlayer->pev->velocity.IsZero() && ping)
 			{
 				float flPing = ping / 1000.f;
 
