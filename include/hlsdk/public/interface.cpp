@@ -25,7 +25,7 @@
 *    version.
 *
 */
-
+#include "framework.h"
 #include "interface.h"
 
 #ifdef _WIN32

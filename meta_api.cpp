@@ -1,7 +1,4 @@
-#include <extdll.h>
-#include <meta_api.h>
-#include "ex_rehlds_api.h"
-#include "cvars.h"
+#include "framework.h"
 
 meta_globals_t *gpMetaGlobals;
 gamedll_funcs_t *gpGamedllFuncs;

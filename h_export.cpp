@@ -1,6 +1,4 @@
-#include <string.h>
-#include <extdll.h>
-#include <meta_api.h>
+#include "framework.h"
 
 enginefuncs_t g_engfuncs;
 globalvars_t  *gpGlobals;

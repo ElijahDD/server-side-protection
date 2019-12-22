@@ -25,6 +25,7 @@
 *    version.
 *
 */
+#include "framework.h"
 #include "sys_shared.h"
 
 #if defined(__GNUC__)

@@ -1,5 +1,3 @@
-#pragma once
-
 extern cvar_t cv_ssp_version;
 extern cvar_t cv_ssp_predict_origin;
 extern cvar_t cv_ssp_reversed_visibility;

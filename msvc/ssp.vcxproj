@@ -72,7 +72,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
@@ -85,6 +85,9 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -98,13 +101,16 @@
     <ClCompile Include="..\dllapi.cpp" />
     <ClCompile Include="..\engine_api.cpp" />
     <ClCompile Include="..\ex_rehlds_api.cpp" />
+    <ClCompile Include="..\framework.cpp" />
     <ClCompile Include="..\h_export.cpp" />
+    <ClCompile Include="..\include\hlsdk\engine\sys_shared.cpp" />
+    <ClCompile Include="..\include\hlsdk\public\interface.cpp" />
     <ClCompile Include="..\meta_api.cpp" />
-    <ClCompile Include="..\public_amalgamation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ex_rehlds_api.h" />
     <ClInclude Include="..\cvars.h" />
+    <ClInclude Include="..\framework.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

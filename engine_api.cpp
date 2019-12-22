@@ -1,5 +1,4 @@
-#include <extdll.h>
-#include <meta_api.h>
+#include "framework.h"
 
 enginefuncs_t g_EngineFunctionsTable =
 {

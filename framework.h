@@ -2,6 +2,7 @@
 #include <meta_api.h>
 #include <stdio.h>
 #include <string.h>
+#include <rehlds_api.h>
 #include "ex_rehlds_api.h"
 #include "cvars.h"
 #include "entity_state.h"

@@ -1,10 +1,4 @@
-#include <extdll.h>
-#include <meta_api.h>
-#include "entity_state.h"
-#include "cbase.h"
-#include "weapons.h"
-#include "player.h"
-#include "enginecallback.h"
+#include "framework.h"
 
 cvar_t cv_ssp_version = { "ssp_version", (char*)Plugin_info.version, FCVAR_SERVER | FCVAR_EXTDLL, 0, nullptr };
 cvar_t cv_ssp_predict_origin = { "ssp_predict_origin", "16.0", FCVAR_SERVER | FCVAR_EXTDLL, 16.f, nullptr };
