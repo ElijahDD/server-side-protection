@@ -9,7 +9,7 @@ BOOL AddToFullPack_Pre(struct entity_state_s* state, int e, edict_t* ent, edict_
 		auto attacker_index = ENTINDEX(host);
 		auto enemy_index = e;
 
-		if (players[attacker_index - 1].state[enemy_index - 1] && ((pcv_ssp_reversed_visibility->value && players[attacker_index - 1].state[enemy_index - 1]) || !pcv_ssp_reversed_visibility->value))
+		if (players[attacker_index - 1].state[enemy_index - 1] && ((pcv_ssp_reversed_visibility->value && players[enemy_index - 1].state[attacker_index - 1]) || !pcv_ssp_reversed_visibility->value))
 		{
 			RETURN_META_VALUE(MRES_SUPERCEDE, FALSE);
 		}

@@ -110,7 +110,6 @@
     <ClCompile Include="..\include\hlsdk\public\interface.cpp" />
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\meta_api.cpp" />
-    <ClCompile Include="..\public_amalgation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ex_rehlds_api.h" />
